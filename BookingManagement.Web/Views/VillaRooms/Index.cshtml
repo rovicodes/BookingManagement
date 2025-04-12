@@ -1,0 +1,63 @@
+﻿@model IEnumerable<VillaRooms>
+
+<div class="container my-5">
+    <div class="card-header bg-success bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Villa List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border p-4">
+        <div class="row pb-3">
+            <div class="col-6 offset-6 text-end">
+                <a asp-controller="VillaRooms" asp-action="Create" class="btn btn-secondary">
+                    <i class="bi bi-plus-circle"></i> Create New Villa Room
+                </a>
+            </div>
+        </div>
+        <table class="table table-striped table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Room Number</th>
+                    <th scope="col">Villa Number</th>
+                    <th scope="col">Special Details</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var villaRoom in Model)
+                {
+                    <tr>
+                        <td>@villaRoom.Villa_RoomId</td>
+                        <td>@villaRoom.VillaId</td>
+                        <td><span class="badge bg-success">@villaRoom.SpecialDetails</span></td>
+                        <td>
+                            <a class="btn btn-primary" asp-controller="VillaRooms" asp-action="Update" asp-route-villaRoomId="@villaRoom.Villa_RoomId">Update</a>
+
+                            <button class="btn btn-danger" onclick="confirmDelete(@villaRoom.Villa_RoomId)">Delete</button>
+
+                            <form id="deleteForm-@villaRoom.Villa_RoomId" method="post" asp-controller="VillaRooms" asp-action="Delete" asp-route-villaRoomId="@villaRoom.Villa_RoomId">
+                                @* <input type="hidden" asp-route-villaId="@villa.Id"/> *@
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/deleteAlert.js"></script>
+    <script src="~/js/notifications.js"></script>
+    <script>
+        @if (TempData["success"] != null)
+        {
+            <text>
+                        showSuccessMessage('@TempData["success"]');
+            </text>
+        }
+    </script>
+}
