@@ -68,7 +68,7 @@ namespace BookingManagement.Web.Controllers
 
             if(ModelState.IsValid && villaObj.Id >0)
             {
-                _dbContext.Update(villaObj);
+                _dbContext.Villas.Update(villaObj);
                 _dbContext.SaveChanges();
                 TempData["Success"] = "Villa Updated successfully";
                 return RedirectToAction("Index", "Villa");

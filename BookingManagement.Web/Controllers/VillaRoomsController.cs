@@ -1,8 +1,11 @@
 ﻿using BookingManagement.Domain.Entities;
+using BookingManagement.Domain.ViewModels;
 using BookingManagement.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BookingManagement.Web.Controllers
 {
@@ -17,40 +20,116 @@ namespace BookingManagement.Web.Controllers
 
         public IActionResult Index()
         {
-            var villaRooms = _dbContext.VillaRooms.ToList();
+            var villaRooms = _dbContext.VillaRooms.Include(u => u.Villa).ToList();
             return View(villaRooms);
         }
 
         public IActionResult Create()
         {
-            ViewBag.villaList = _dbContext.Villas.Select(u => new SelectListItem
+            VillaRoomsVM villaRoomVM = new VillaRoomsVM
             {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            }).ToList();
+                VillaRooms = new VillaRooms(), // not necessary but better to have to avoid null reference error
+                VillaList = GetVillaList()
+            };
 
-            return View();
+            return View(villaRoomVM);
         }
 
         [HttpPost]
-        public IActionResult Create(VillaRooms villaRooms)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(VillaRoomsVM villaRoomsVM)
         {
+            if (_dbContext.VillaRooms.Any(u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId))
+            {
+                ModelState.AddModelError("VillaRooms.Villa_RoomId", "Room ID already exists.");
+                villaRoomsVM.VillaList = GetVillaList();
+                return View(villaRoomsVM);
+            }
             if(ModelState.IsValid)
             {
-                _dbContext.Add(villaRooms);
+                _dbContext.VillaRooms.Add(villaRoomsVM.VillaRooms);
                 _dbContext.SaveChanges();
-                TempData["Success"] = "Room added successfully";
+                TempData["Success"] = "Villa Room added successfully";
                 return RedirectToAction("Index", "VillaRooms");
             }
 
-            ViewBag.villaList = _dbContext.Villas.Select(u => new SelectListItem
+            return View(villaRoomsVM);
+            
+        }
+
+        public IActionResult Update(int? villaRoomId)
+        {
+            if(villaRoomId == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            var villaRooms = _dbContext.VillaRooms.FirstOrDefault(u => u.Villa_RoomId == villaRoomId);
+
+            if(villaRooms == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            VillaRoomsVM villaRoomsVM = new VillaRoomsVM
+            {
+                VillaList = GetVillaList(),
+                VillaRooms = villaRooms
+            };
+
+            return View(villaRoomsVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(VillaRoomsVM? villaRoomsVM)
+        {
+            if(villaRoomsVM == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var villaRoomExist = _dbContext.VillaRooms.Any
+                (u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId);
+
+            if (villaRoomExist)
+            {
+                ModelState.AddModelError("VillaRooms.Villa_RoomId", "Villa room id already exist");
+            }
+
+            if(ModelState.IsValid)
+            {
+                _dbContext.VillaRooms.Update(villaRoomsVM.VillaRooms);
+                _dbContext.SaveChanges();
+                TempData["Success"] = "Villa Room Updates successfully";
+                return RedirectToAction("Index", "VillaRooms");
+            }
+            villaRoomsVM.VillaList = GetVillaList();
+
+            return View(villaRoomsVM);
+
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int? villaRoomId)
+        {
+            if(villaRoomId == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            VillaRooms? villaRoom = _dbContext.VillaRooms.FirstOrDefault(u => u.Villa_RoomId == villaRoomId);
+
+            _dbContext.VillaRooms.Remove(villaRoom);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index", "VillaRooms");
+        }
+
+        private List<SelectListItem> GetVillaList()
+        {
+            return _dbContext.Villas.Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.Id.ToString()
             }).ToList();
-
-            return View(villaRooms);
-            
         }
     }
 }
