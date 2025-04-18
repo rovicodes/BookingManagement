@@ -11,59 +11,13 @@ using System.Threading.Tasks;
 
 namespace BookingManagement.Infrastructure.Repository
 {
-    public class VillaRoomsRepository : IVillaRoomsRepository
+    public class VillaRoomsRepository : Repository<VillaRooms>, IVillaRoomsRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public VillaRoomsRepository(ApplicationDbContext dbContext)
+        public VillaRoomsRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
-        }
-        public void Add(VillaRooms villaRooms)
-        {
-            _dbContext.VillaRooms.Add(villaRooms);
-        }
-
-        public void Delete(VillaRooms villaRooms)
-        {
-            _dbContext.VillaRooms.Remove(villaRooms);
-        }
-
-        public VillaRooms Get(Expression<Func<VillaRooms, bool>> filter, string? includeProperties = null)
-        {
-            IQueryable<VillaRooms> query = _dbContext.VillaRooms;
-
-            query = query.Where(filter);
-
-            if(includeProperties != null)
-            {
-                foreach (var inclProp in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(inclProp);
-                }
-            }
-
-            return query.FirstOrDefault();
-        }
-
-        public IEnumerable<VillaRooms> GetAll(Expression<Func<VillaRooms, bool>>? filter = null, string? includeProperties = null)
-        {
-            IQueryable<VillaRooms> query = _dbContext.VillaRooms;
-
-            if(filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            if(includeProperties != null)
-            {
-                foreach(var inclProp  in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(inclProp);
-                }
-            }
-
-            return query.ToList();
         }
 
         public void Save()

@@ -12,56 +12,12 @@ using System.Threading.Tasks;
 
 namespace BookingManagement.Infrastructure.Repository
 {
-    public class VillaRepository : IVillaRepository
+    public class VillaRepository :  Repository<Villa>, IVillaRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        public VillaRepository( ApplicationDbContext dbContext)
+        public VillaRepository( ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;  
-        }
-        public void Add(Villa villa)
-        {
-            _dbContext.Villas.Add(villa);
-        }
-
-        public void Delete(Villa villa)
-        {
-            _dbContext.Villas.Remove(villa);
-        }
-
-        public Villa Get(Expression<Func<Villa, bool>> filter, string? includeProperties = null)
-        {
-            IQueryable<Villa> query = _dbContext.Villas;
-            query = query.Where(filter);
-
-            if(includeProperties != null)
-            {
-                foreach(var inclProp in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(inclProp);
-                }
-            }
-            return query.FirstOrDefault();
-        }
-
-        public IEnumerable<Villa> GetAll(Expression<Func<Villa, bool>>? filter = null, string? includeProperties = null)
-        {
-            IQueryable<Villa> query = _dbContext.Villas;
-
-            if(filter != null)
-            {
-                query = query.Where(filter);
-            }
-            
-            if(includeProperties != null)
-            {
-                foreach(var inclProp in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(inclProp);
-                }
-            }
-
-            return query.ToList();
         }
 
         public void Save()

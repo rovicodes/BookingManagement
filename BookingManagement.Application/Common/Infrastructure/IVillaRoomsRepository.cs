@@ -8,15 +8,10 @@ using System.Threading.Tasks;
 
 namespace BookingManagement.Application.Common.Infrastructure
 {
-    public interface IVillaRoomsRepository
+    public interface IVillaRoomsRepository : IRepository<VillaRooms>
     {
-        IEnumerable<VillaRooms> GetAll(Expression<Func<VillaRooms, bool>>? filter = null, String? includeProperties = null);
-
-        VillaRooms Get(Expression<Func<VillaRooms, bool>> filter, String? includeProperties = null);
-
-        void Add(VillaRooms villaRooms);
+      
         void Update(VillaRooms villaRooms);
-        void Delete(VillaRooms villaRooms);
         void Save();
 
     }
