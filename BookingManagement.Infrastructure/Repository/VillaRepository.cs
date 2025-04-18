@@ -20,11 +20,6 @@ namespace BookingManagement.Infrastructure.Repository
             _dbContext = dbContext;  
         }
 
-        public void Save()
-        {
-            _dbContext.SaveChanges();
-        }
-
         public void Update(Villa villa)
         {
             _dbContext.Villas.Update(villa);

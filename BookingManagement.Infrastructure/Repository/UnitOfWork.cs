@@ -1,28 +1,31 @@
 ﻿using BookingManagement.Application.Common.Infrastructure;
-using BookingManagement.Domain.Entities;
 using BookingManagement.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BookingManagement.Infrastructure.Repository
 {
-    public class VillaRoomsRepository : Repository<VillaRooms>, IVillaRoomsRepository
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public VillaRoomsRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public IVillaRepository Villa { get; private set; }
+
+        public IVillaRoomsRepository VillaRooms { get; private set; }
+
+        public UnitOfWork(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+            Villa = new VillaRepository(_dbContext);
+            VillaRooms = new VillaRoomsRepository(_dbContext);
         }
 
-        public void Update(VillaRooms villaRooms)
+        public void Save()
         {
-            _dbContext.VillaRooms.Update(villaRooms);
+            _dbContext.SaveChanges();
         }
     }
 }

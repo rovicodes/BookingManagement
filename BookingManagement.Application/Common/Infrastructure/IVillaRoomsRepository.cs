@@ -12,7 +12,6 @@ namespace BookingManagement.Application.Common.Infrastructure
     {
       
         void Update(VillaRooms villaRooms);
-        void Save();
 
     }
 }

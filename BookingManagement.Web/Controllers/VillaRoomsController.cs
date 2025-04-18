@@ -13,18 +13,16 @@ namespace BookingManagement.Web.Controllers
 {
     public class VillaRoomsController : Controller
     {
-        private readonly IVillaRoomsRepository _villaRoomRepo;
-        private readonly IVillaRepository _villaRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public VillaRoomsController(IVillaRoomsRepository villaRoomRepo, IVillaRepository villaRepo)
+        public VillaRoomsController(IUnitOfWork unitOfWork)
         {
-            _villaRoomRepo = villaRoomRepo;
-            _villaRepo = villaRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var villaRooms = _villaRoomRepo.GetAll(null, includeProperties: "Villa");
+            var villaRooms = _unitOfWork.VillaRooms.GetAll(null, includeProperties: "Villa");
             return View(villaRooms);
         }
 
@@ -43,7 +41,7 @@ namespace BookingManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(VillaRoomsVM villaRoomsVM)
         {
-            if (_villaRoomRepo.GetAll().Any(u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId))
+            if (_unitOfWork.VillaRooms.GetAll().Any(u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId))
             {
                 ModelState.AddModelError("VillaRooms.Villa_RoomId", "Room ID already exists.");
                 villaRoomsVM.VillaList = GetVillaList();
@@ -51,8 +49,8 @@ namespace BookingManagement.Web.Controllers
             }
             if(ModelState.IsValid)
             {
-                _villaRoomRepo.Add(villaRoomsVM.VillaRooms);
-                _villaRoomRepo.Save();
+                _unitOfWork.VillaRooms.Add(villaRoomsVM.VillaRooms);
+                _unitOfWork.VillaRooms.Save();
                 TempData["Success"] = "Villa Room added successfully";
                 return RedirectToAction("Index", "VillaRooms");
             }
@@ -67,7 +65,7 @@ namespace BookingManagement.Web.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
-            var villaRooms = _villaRoomRepo.Get(u => u.Villa_RoomId == villaRoomId);
+            var villaRooms = _unitOfWork.VillaRooms.Get(u => u.Villa_RoomId == villaRoomId);
 
             if(villaRooms == null)
             {
@@ -77,7 +75,7 @@ namespace BookingManagement.Web.Controllers
             VillaRoomsVM villaRoomsVM = new VillaRoomsVM
             {
                 VillaList = GetVillaList(),
-                VillaRooms = villaRooms
+                VillaRooms = new VillaRooms()
             };
 
             return View(villaRoomsVM);
@@ -92,7 +90,7 @@ namespace BookingManagement.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            var villaRoomExist = _villaRoomRepo.GetAll().Any(u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId);
+            var villaRoomExist = _unitOfWork.VillaRooms.GetAll().Any(u => u.Villa_RoomId == villaRoomsVM.VillaRooms.Villa_RoomId);
 
             if (villaRoomExist)
             {
@@ -101,8 +99,8 @@ namespace BookingManagement.Web.Controllers
 
             if(ModelState.IsValid)
             {
-                _villaRoomRepo.Update(villaRoomsVM.VillaRooms);
-                _villaRoomRepo.Save();
+                _unitOfWork.VillaRooms.Update(villaRoomsVM.VillaRooms);
+                _unitOfWork.VillaRooms.Save();
                 TempData["Success"] = "Villa Room Updates successfully";
                 return RedirectToAction("Index", "VillaRooms");
             }
@@ -119,16 +117,16 @@ namespace BookingManagement.Web.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
-            VillaRooms? villaRoom = _villaRoomRepo.Get(u => u.Villa_RoomId == villaRoomId);
+            VillaRooms? villaRoom = _unitOfWork.VillaRooms.Get(u => u.Villa_RoomId == villaRoomId);
 
-           _villaRoomRepo.Delete(villaRoom);
-            _villaRoomRepo.Save();
+            _unitOfWork.VillaRooms.Delete(villaRoom);
+            _unitOfWork.VillaRooms.Save();
             return RedirectToAction("Index", "VillaRooms");
         }
 
         private List<SelectListItem> GetVillaList()
         {
-            return _villaRepo.GetAll().Select(u => new SelectListItem
+            return _unitOfWork.Villa.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.Id.ToString()
