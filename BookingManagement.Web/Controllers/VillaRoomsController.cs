@@ -50,7 +50,7 @@ namespace BookingManagement.Web.Controllers
             if(ModelState.IsValid)
             {
                 _unitOfWork.VillaRooms.Add(villaRoomsVM.VillaRooms);
-                _unitOfWork.VillaRooms.Save();
+                _unitOfWork.Save();
                 TempData["Success"] = "Villa Room added successfully";
                 return RedirectToAction("Index", "VillaRooms");
             }
@@ -100,7 +100,7 @@ namespace BookingManagement.Web.Controllers
             if(ModelState.IsValid)
             {
                 _unitOfWork.VillaRooms.Update(villaRoomsVM.VillaRooms);
-                _unitOfWork.VillaRooms.Save();
+                _unitOfWork.Save();
                 TempData["Success"] = "Villa Room Updates successfully";
                 return RedirectToAction("Index", "VillaRooms");
             }
@@ -120,7 +120,7 @@ namespace BookingManagement.Web.Controllers
             VillaRooms? villaRoom = _unitOfWork.VillaRooms.Get(u => u.Villa_RoomId == villaRoomId);
 
             _unitOfWork.VillaRooms.Delete(villaRoom);
-            _unitOfWork.VillaRooms.Save();
+            _unitOfWork.Save();
             return RedirectToAction("Index", "VillaRooms");
         }
 
