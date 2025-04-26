@@ -3,15 +3,18 @@ using BookingManagement.Domain.Entities;
 using BookingManagement.Infrastructure;
 using BookingManagement.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace BookingManagement.Web.Controllers
 {
     public class VillaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public VillaController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public VillaController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -32,8 +35,23 @@ namespace BookingManagement.Web.Controllers
             {
                 ModelState.AddModelError("Description", "Name and Description cannot be same");
             }
+
             if (ModelState.IsValid)
             {
+                if(addVilla.Image != null)
+                {
+                    string webRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(addVilla.Image.FileName);
+                    string path = Path.Combine(webRootPath + "/images/villas/", fileName);
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        addVilla.Image.CopyTo(fileStream);
+                    }
+
+                    addVilla.ImageUrl = "/images/villas/" + fileName;
+                }
+
                 _unitOfWork.Villa.Add(addVilla);
                 _unitOfWork.Save();
                 TempData["Success"] = "Villa Created successfully";
@@ -70,6 +88,28 @@ namespace BookingManagement.Web.Controllers
 
             if(ModelState.IsValid && villaObj.Id >0)
             {
+                if(villaObj.Image != null)
+                {
+                    string webRootPath = _webHostEnvironment.WebRootPath;
+                    
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(villaObj.Image.FileName);
+                    string path = Path.Combine(webRootPath + "/images/villas", fileName);
+                    if(villaObj.ImageUrl != null)
+                    {
+                        string imageUrl = villaObj.ImageUrl;
+                        DeleteImage(webRootPath, imageUrl);
+                    }
+                                      
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        villaObj.Image.CopyTo(fileStream);
+                    }
+                   
+                    villaObj.ImageUrl = "/images/villas/" + fileName;
+                    
+                }
+
                 _unitOfWork.Villa.Update(villaObj);
                 _unitOfWork.Save();
                 TempData["Success"] = "Villa Updated successfully";
@@ -88,18 +128,38 @@ namespace BookingManagement.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            Villa villaObj = _unitOfWork.Villa.Get(u => u.Id == villaId);
+            Villa villaObj = _unitOfWork.Villa.Get(u => u.Id == villaId);           
 
             if (villaObj == null)
             {
                 return RedirectToAction("Error", "Home");
             }
+
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            if (villaObj.ImageUrl != null)
+            {
+                string imageUrl = villaObj.ImageUrl;
+                DeleteImage(webRootPath, imageUrl);
+            }
+
             _unitOfWork.Villa.Delete(villaObj);
             _unitOfWork.Save();
             TempData["Success"] = "Villa deleted successfully";
 
             return RedirectToAction("Index", "Villa");
 
+        }
+
+        public void DeleteImage(string webRootPath, string? imageUrl)
+        {
+            string existingPath = Path.Combine(webRootPath + imageUrl);
+
+            FileInfo file = new FileInfo(existingPath);
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
         }
     }
 }
