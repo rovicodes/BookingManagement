@@ -19,6 +19,8 @@ namespace BookingManagement.Infrastructure.Data
 
         public DbSet<VillaRooms> VillaRooms { get; set; }
 
+        public DbSet<Amenity> Amenity { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // base.OnModelCreating(modelBuilder);
@@ -102,6 +104,68 @@ namespace BookingManagement.Infrastructure.Data
                    VillaId = 3,
                }
                );
+
+            modelBuilder.Entity<Amenity>().HasData(
+              new Amenity
+              {
+                  Id = 1,
+                  villaId = 1,
+                  Name = "Private Pool"
+              }, new Amenity
+              {
+                  Id = 2,
+                  villaId = 1,
+                  Name = "Microwave"
+              }, new Amenity
+              {
+                  Id = 3,
+                  villaId = 1,
+                  Name = "Private Balcony"
+              }, new Amenity
+              {
+                  Id = 4,
+                  villaId = 1,
+                  Name = "1 king bed and 1 sofa bed"
+              },
+
+              new Amenity
+              {
+                  Id = 5,
+                  villaId = 2,
+                  Name = "Private Plunge Pool"
+              }, new Amenity
+              {
+                  Id = 6,
+                  villaId = 2,
+                  Name = "Microwave and Mini Refrigerator"
+              }, new Amenity
+              {
+                  Id = 7,
+                  villaId = 2,
+                  Name = "Private Balcony"
+              }, new Amenity
+              {
+                  Id = 8,
+                  villaId = 2,
+                  Name = "king bed or 2 double beds"
+              },
+
+              new Amenity
+              {
+                  Id = 9,
+                  villaId = 3,
+                  Name = "Private Pool"
+              }, new Amenity
+              {
+                  Id = 10,
+                  villaId = 3,
+                  Name = "Jacuzzi"
+              }, new Amenity
+              {
+                  Id = 11,
+                  villaId = 3,
+                  Name = "Private Balcony"
+              });
         }
     }
 }

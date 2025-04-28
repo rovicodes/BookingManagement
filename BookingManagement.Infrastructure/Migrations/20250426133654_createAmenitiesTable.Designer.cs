@@ -4,6 +4,7 @@ using BookingManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426133654_createAmenitiesTable")]
+    partial class createAmenitiesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,74 +48,6 @@ namespace BookingManagement.Infrastructure.Migrations
                     b.HasIndex("villaId");
 
                     b.ToTable("Amenity");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Private Pool",
-                            villaId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Microwave",
-                            villaId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Private Balcony",
-                            villaId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "1 king bed and 1 sofa bed",
-                            villaId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Private Plunge Pool",
-                            villaId = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Microwave and Mini Refrigerator",
-                            villaId = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Private Balcony",
-                            villaId = 2
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "king bed or 2 double beds",
-                            villaId = 2
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Private Pool",
-                            villaId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Jacuzzi",
-                            villaId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Private Balcony",
-                            villaId = 3
-                        });
                 });
 
             modelBuilder.Entity("BookingManagement.Domain.Entities.Villa", b =>

@@ -1,4 +1,5 @@
 ﻿using BookingManagement.Application.Common.Infrastructure;
+using BookingManagement.Domain.Entities;
 using BookingManagement.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,14 @@ namespace BookingManagement.Infrastructure.Repository
 
         public IVillaRoomsRepository VillaRooms { get; private set; }
 
+        public IAmenitiesRepository Amenities { get; private set; }
+
         public UnitOfWork(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
             Villa = new VillaRepository(_dbContext);
             VillaRooms = new VillaRoomsRepository(_dbContext);
+            Amenities = new AmenitiesRepository(_dbContext);
         }
 
         public void Save()

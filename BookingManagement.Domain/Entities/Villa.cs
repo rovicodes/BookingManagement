@@ -27,5 +27,9 @@ namespace BookingManagement.Domain.Entities
         public IFormFile? Image { get; set; }
         public DateTime? Created_Date { get; set; }
         public DateTime? Updated_Date { get; set; }
+
+        public IEnumerable<VillaRooms>? VillaRooms { get; set; }
+
+        public IEnumerable<Amenity>? Amenities { get; set; }
     }
 }

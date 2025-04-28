@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Amenity>
+
+<div class="container my-5">
+    <div class="card-header bg-success bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Villa List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border p-4">
+        <div class="row pb-3">
+            <div class="col-6 offset-6 text-end">
+                <a asp-controller="Amenity" asp-action="Create" class="btn btn-secondary">
+                    <i class="bi bi-plus-circle"></i> Create New Villa
+                </a>
+            </div>
+        </div>
+        <table class="table table-striped table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Amenity</th>
+                    <th scope="col">Villa</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var amenity in Model)
+                {
+                    <tr>
+                        <td>@amenity.Name</td>
+                        <td>@amenity.Villa.Name</td>                       
+                        <td>@amenity.Description</td>
+                        <td>
+                            <a class="btn btn-primary" asp-controller="Amenity" asp-action="Update" asp-route-amenityId="@amenity.Id">Update</a>
+
+                            <button class="btn btn-danger" onclick="confirmDelete(@amenity.Id)">Delete</button>
+
+                            <form id="deleteForm-@amenity.Id" method="post" asp-controller="Amenity" asp-action="Delete" asp-route-amenityId="@amenity.Id">
+                                @* <input type="hidden" asp-route-villaId="@villa.Id"/> *@
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/deleteAlert.js"></script>
+    <script src="~/js/notifications.js"></script>
+    <script>
+        @if (TempData["success"] != null)
+        {
+            <text>
+                        showSuccessMessage('@TempData["success"]');
+            </text>
+        }
+    </script>
+}

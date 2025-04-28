@@ -4,23 +4,26 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BookingManagement.Domain.Entities
 {
-    public class VillaRooms
+    public class Amenity
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [DisplayName("Room Number")]
-        public int Villa_RoomId { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        public string? Name { get; set; }
+
+        public string ? Description { get; set; }
 
         [ForeignKey("Villa")]
         [DisplayName("Villa")]
-        public int VillaId { get; set; }
+        public int villaId { get; set; }
         public Villa? Villa { get; set; }
-        
-        [DisplayName("Special Details")]
-        public string? SpecialDetails { get; set; }
+
+
     }
 }

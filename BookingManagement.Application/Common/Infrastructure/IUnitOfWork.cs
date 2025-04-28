@@ -12,6 +12,8 @@ namespace BookingManagement.Application.Common.Infrastructure
 
         IVillaRoomsRepository VillaRooms { get; }
 
+        IAmenitiesRepository Amenities { get; }
+
         void Save();
     }
 }
