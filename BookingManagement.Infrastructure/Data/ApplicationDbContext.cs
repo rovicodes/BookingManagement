@@ -1,4 +1,5 @@
 ﻿using BookingManagement.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookingManagement.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -23,7 +24,8 @@ namespace BookingManagement.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // base.OnModelCreating(modelBuilder);
+             base.OnModelCreating(modelBuilder); // you need this if you are adding some custom stuff to table or if you are creating identity, because you are overriding onmodecreating method
+
             modelBuilder.Entity<Villa>().HasData(
             new Villa
             {
