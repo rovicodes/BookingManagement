@@ -1,6 +1,8 @@
 using BookingManagement.Application.Common.Infrastructure;
+using BookingManagement.Domain.Entities;
 using BookingManagement.Infrastructure;
 using BookingManagement.Infrastructure.Data;
+using BookingManagement.Infrastructure.Identity;
 using BookingManagement.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +15,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 //builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 //builder.Services.AddScoped<IVillaRoomsRepository, VillaRoomsRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await IdentitySeeder.SeedRolesAsync(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
