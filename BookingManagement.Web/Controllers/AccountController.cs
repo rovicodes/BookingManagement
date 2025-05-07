@@ -39,10 +39,12 @@ namespace BookingManagement.Web.Controllers
             return View(loginVM);
         }
 
-        public IActionResult Register()
+        public IActionResult Register(string? returnUrl = null)
         {
+            returnUrl ??= Url.Content("~/");
             RegisterVM registerVM = new RegisterVM
             {
+                RedirectUrl = returnUrl,
                 RoleList = _roleManager.Roles.Select(u => new SelectListItem
                 {
                     Text = u.Name,
@@ -56,7 +58,8 @@ namespace BookingManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-
+           if(ModelState.IsValid) 
+           { 
             ApplicationUser appUser = new()
             {
                 FullName = registerVM.Name,
@@ -70,9 +73,9 @@ namespace BookingManagement.Web.Controllers
 
             var result = await _userManager.CreateAsync(appUser, registerVM.Password); //IdentityResult : result will be object of type IdentityResult
 
-            if (result.Succeeded) 
-            { 
-                if(!string.IsNullOrEmpty(registerVM.Role))
+            if (result.Succeeded)
+            {
+                if (!string.IsNullOrEmpty(registerVM.Role))
                 {
                     await _userManager.AddToRoleAsync(appUser, registerVM.Role);
                 }
@@ -93,11 +96,11 @@ namespace BookingManagement.Web.Controllers
                 }
             }
 
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError("", error.Description);
             }
-      
+           }
             registerVM.RoleList = _roleManager.Roles.Select(u => new SelectListItem
             {
                 Text = u.Name,

@@ -2,11 +2,13 @@
 using BookingManagement.Domain.Entities;
 using BookingManagement.Infrastructure;
 using BookingManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
 namespace BookingManagement.Web.Controllers
 {
+    [Authorize]
     public class VillaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
